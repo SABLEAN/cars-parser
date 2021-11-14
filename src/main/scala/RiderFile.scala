@@ -20,9 +20,7 @@ object RiderFile {
       new FileOutputStream(new File(fileName))
     }
 
-private def fileNames(): Set[String] =
-{
-  Range.inclusive(1992,2022).toSet.map[String](year =>s"car-models-data/$year.csv")
-}
+  private def fileNames(): Set[String] =
+    Range.inclusive(1992, 2022).toSet.map[String](year => s"car-models-data/$year.csv")
 
 }
