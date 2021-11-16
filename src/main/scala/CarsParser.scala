@@ -1,6 +1,7 @@
 import cats.effect.{IO, Resource}
 
 import java.io.{FileInputStream, FileOutputStream}
+import scala.io.Source
 
 object CarsParser extends App {
 
@@ -13,12 +14,31 @@ object CarsParser extends App {
       out <- RiderFile.openOutputStream(fileNameOut)
 
     } yield (in, out)
-  def inputStreamDef(ff: FileInputStream): List[String] = ???
-  def parser(l: List[String]):List[Cars] = ???
-  def calculiator(l:List[Cars]):List[Cars2] = ???
-  def outputStreamDef(oo:FileOutputStream, l:List[Cars2]):Unit = ???
+  def inputStreamDef(ff: FileInputStream): List[String] =
+    Source.fromInputStream(ff).getLines().toList
 
-  putAndDrop("cars.csv", "cars2.csv").use(streams => streams())
+  def parser(l: List[String]): List[Cars] =
+    l.map { s =>
+      val s1: List[String] = s.split(",").toList
+      val s2: Cars         = Cars(s1.apply(0).toInt, s1.apply(1), s1.apply(2))
+      s2
+    }
+
+  def calculiator(l: List[Cars]): List[Cars2] = {
+
+    l.foldLeft(List.empty[Cars2] )((cc, l) => {
+
+      val carrs2: Cars2 = cc.find(ex => ex.car == l.brand + l.model) match {
+        case Some(value) => Cars2(value.car, value.years :+ l.year)
+        case None => Cars2(l.brand + l.model, List(l.year))
+      }
+    cc.filter(b => b.car != carrs2.car):+carrs2
+
+  })}
+
+  def outputStreamDef(oo: FileOutputStream, l: List[Cars2]): Unit = ???
+
+  putAndDrop("cars.csv", "cars2.csv").use(streams => streams(inputStreamDef()))
   println("Scala-parser test!!!")
   val carsOut: Cars = RiderFile.openInputStream("cars.csv")
   println("Scala-parser test!!!")
