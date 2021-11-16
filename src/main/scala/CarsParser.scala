@@ -1,6 +1,7 @@
 import cats.effect.{IO, Resource}
 
 import java.io.{FileInputStream, FileOutputStream}
+import java.nio.charset.StandardCharsets
 import scala.io.Source
 
 object CarsParser extends App {
@@ -24,19 +25,24 @@ object CarsParser extends App {
       s2
     }
 
-  def calculiator(l: List[Cars]): List[Cars2] = {
-
-    l.foldLeft(List.empty[Cars2] )((cc, l) => {
-
+  def calculiator(l: List[Cars]): List[Cars2] =
+    l.foldLeft(List.empty[Cars2]) { (cc, l) =>
       val carrs2: Cars2 = cc.find(ex => ex.car == l.brand + l.model) match {
         case Some(value) => Cars2(value.car, value.years :+ l.year)
-        case None => Cars2(l.brand + l.model, List(l.year))
+        case None        => Cars2(l.brand + l.model, List(l.year))
       }
-    cc.filter(b => b.car != carrs2.car):+carrs2
+      cc.filter(b => b.car != carrs2.car) :+ carrs2
 
-  })}
+    }
+  def unparser(l: List[Cars2]): List[String] =
+    l.map(s => s.car + "," + s.years.mkString("[\"", "\",\"", "\"]"))
 
-  def outputStreamDef(oo: FileOutputStream, l: List[Cars2]): Unit = ???
+  def outputStreamDef(oo: FileOutputStream, l: List[String]): Unit =
+    l.foreach { ll =>
+      oo.write(ll.getBytes(StandardCharsets.UTF_8))
+      oo.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8))
+
+    }
 
   putAndDrop("cars.csv", "cars2.csv").use(streams => streams(inputStreamDef()))
   println("Scala-parser test!!!")
