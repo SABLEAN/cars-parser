@@ -8,7 +8,7 @@ object CarsParser extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
 
-    val inout = InOut.intOut(args)
+    val inout = InOut.inOut(args)
 
     PutAndDrop.putAndDrop(inout._1, inout._2).use { case (inputStream, outpuStream) =>
       for {

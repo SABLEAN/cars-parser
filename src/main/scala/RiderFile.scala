@@ -20,6 +20,4 @@ object RiderFile {
       new FileOutputStream(new File(fileName))
     }
 
-
-
 }
