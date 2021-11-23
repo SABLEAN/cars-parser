@@ -10,7 +10,7 @@ object CarsParser extends IOApp {
 
     val inout = InOut.inOut(args)
 
-    PutAndDrop.putAndDrop(inout._1, inout._2).use { case (inputStream, outpuStream) =>
+    PutAndDrop.putAndDrop(inout.inFileName, inout.outFileName).use { case (inputStream, outpuStream) =>
       for {
         inputLines <- IO(InputStreamDef.inputStreamDef(inputStream))
         pars       <- IO(Parser.parser(inputLines))
